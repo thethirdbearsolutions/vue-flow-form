@@ -14,6 +14,7 @@ export const QuestionType = Object.freeze({
   LongText: 'FlowFormLongTextType',
   MultipleChoice: 'FlowFormMultipleChoiceType',
   MultiplePictureChoice: 'FlowFormMultiplePictureChoiceType',
+  MultipleText: 'FlowFormMultipleTextType',
   Number: 'FlowFormNumberType',
   Password: 'FlowFormPasswordType',
   Phone: 'FlowFormPhoneType',
@@ -135,6 +136,7 @@ export default class QuestionModel {
     this.columns = []
     this.labelLeft = null
     this.labelRight = null
+    this.subquestions = []
 
     Object.assign(this, options)
 
@@ -156,7 +158,9 @@ export default class QuestionModel {
       this.placeholder = 'yyyy-mm-dd'
     }
 
-    if (this.type !== QuestionType.Matrix && this.multiple && !Array.isArray(this.answer)) {
+    if (this.isCompositeType()) {
+      this.answer = this.answer || this.getCompositeEmptyAnswer()
+    } else if (this.type !== QuestionType.Matrix && this.multiple && !Array.isArray(this.answer)) {
       this.answer = this.answer ? [this.answer] : []
     }
 
@@ -237,12 +241,24 @@ export default class QuestionModel {
 
   resetAnswer() {
     this.answered = false
-    this.answer = this.multiple ? [] : null
+    if (this.isCompositeType()) {
+      this.answer = this.getCompositeEmptyAnswer()
+    } else {
+      this.answer = this.multiple ? [] : null
+    }
     this.other = null
 
     this.resetOptions()
   }
 
+  isCompositeType() {
+    return [QuestionType.MultipleText].includes(this.type)
+  }
+
+  getCompositeEmptyAnswer() {
+    return this.subquestions.map(q => q.id).reduce((a, v) => ({ ...a, [v]: ''}), {}) 
+  }
+  
   isMultipleChoiceType() {
     return [QuestionType.MultipleChoice, QuestionType.MultiplePictureChoice].includes(this.type)
   }

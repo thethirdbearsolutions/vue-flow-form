@@ -110,6 +110,14 @@
         }
       },
 
+      onCompositeChange($event, key) {
+        this.dirty = true
+        this.dataValue[key] = $event.target.value
+
+        this.onKeyDown()
+        this.setAnswer(this.dataValue)
+      },
+      
       onChange($event) {
         this.dirty = true
         this.dataValue = $event.target.value
@@ -119,6 +127,10 @@
       },
 
       onEnter() {
+        console.log(this.question.type);
+        if (this.question.type === 'FlowFormMultipleTextType') {
+          return;
+        }
         this._onEnter()
       },
 

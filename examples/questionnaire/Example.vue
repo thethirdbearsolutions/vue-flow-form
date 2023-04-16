@@ -90,12 +90,18 @@
         // Create question list with QuestionModel instances
         questions: [
           new QuestionModel({
-            id: 'first_name',
+            id: 'name',
             tagline: 'Hi! Welcome to our demo survey 😊',
-            title: 'What is your first name?',
-            type: QuestionType.Text,
+            title: 'What is your name?',
+            type: QuestionType.MultipleText,
             required: true,
-            placeholder: 'Start typing here...'
+            subquestions: [{
+              id: 'first_name',
+              placeholder: 'First name',
+            }, {
+              id: 'last_name',
+              placeholder: 'Last name',
+            }],
           }),
           new QuestionModel({
             id: 'email',
